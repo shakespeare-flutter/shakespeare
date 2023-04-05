@@ -29,6 +29,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  collection:
   flutter:
     sdk: flutter
 
@@ -36,9 +37,16 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  flutter_native_splash: ^2.2.18
+
   flutter_provider: ^2.1.0
   provider: ^6.0.5
+  webview_flutter: ^4.0.7
+  epub_view: ^3.0.0
+  epubx: ^3.0.0
+  file_picker: ^5.2.6
+  path_provider: ^2.0.14
+  shared_preferences: ^2.0.20
+
 
 dev_dependencies:
   flutter_test:
@@ -50,6 +58,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  flutter_native_splash: ^2.2.0+1
+
 
 
 # For information on the generic Dart part of this file, see the
@@ -64,9 +74,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -94,5 +103,6 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 flutter_native_splash:
+  color: "#0B610B"
   image: assets/title2.png
-  color: "204f36"
+  fullscreen: true

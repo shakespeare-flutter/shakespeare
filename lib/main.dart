@@ -1,14 +1,31 @@
+import 'dart:io';
+import 'package:epub_view/epub_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_provider/flutter_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'BookList.dart';
 import 'SelectedBooks.dart';
+import 'system.dart';
+import 'package:image/image.dart' as image;
+import 'package:flutter/widgets.dart' as wid;
+import 'SelectedBooks.dart';
 
-void main() {
+
+late SharedPreferences pref;
+List<String> bookPath = [];
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  pref = await SharedPreferences.getInstance();
+  if(!pref.containsKey('bookPath')){
+    await pref.setStringList('bookPath', <String>[]);
+  }
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_)=>SelectedBook())
+        ChangeNotifierProvider(create: (_)=>bookListProvider()),
+        ChangeNotifierProvider(create: (_)=>bookPathProvider()),
+        ChangeNotifierProvider(create: (_)=>SharedPreferencesProvider())
       ],
       child: MyApp(),
     ),
@@ -21,6 +38,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SharedPreferencesProvider userDataPV = Provider.of<SharedPreferencesProvider>(context);
+    userDataPV.intializeUserData(pref);
+    bookListProvider bookListPV = Provider.of<bookListProvider>(context);
+
+    bookPath = userDataPV.userdata.getStringList('bookPath')!;
+    initBookList(bookPath, bookListPV);
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -36,10 +60,7 @@ class MyApp extends StatelessWidget {
         /*
         '/RestaurantList': (context) => const RestaurantListPage(),
         '/JuiceOrLatte': (context) => const JuiceOrLattePage(),
-        '/Milk': (context) => const MilkPage(),
-        '/SweetCoffee': (context) => const SweetCoffeePage(),
-        '/CoffeeAgain': (context) => const CoffeeAgainPage(),
-        '/Result': (context) => const ResultPage(),*/
+       */
       },
       //home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -48,15 +69,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -104,5 +116,36 @@ class _MyHomePageState extends State<MyHomePage> {
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+}
+
+
+Future<void> initBookList(
+    List<String> bookPath, bookListProvider bookListPV) async {
+  Book abook;
+  String coverstr = 'assets/samplecover.jpg';
+  for (int i = 0; i < bookPath.length; i++) {
+    var targetFile = new File(bookPath[i]);
+    List<int> bytes = targetFile.readAsBytesSync();
+// Opens a book and reads all of its content into memory
+    EpubBook epubBook = await EpubReader.readBook(bytes);
+    String info = "very fun";
+    String? title = epubBook.Title;
+    String? author = epubBook.Author;
+    image.Image? cover = epubBook.CoverImage;
+    if (File('location/' + title.toString() + '.png').existsSync()) {
+      print("File exists");
+    } else {
+      if (cover != null) {
+        File('location/' + title.toString() + '.png')
+            .writeAsBytesSync(image.encodePng(cover!));
+        coverstr = 'location/' + title.toString() + '.png';
+      } else {
+        print("Error Saving Cover Image");
+        coverstr = 'assets/samplecover.jpg';
+      }
+    }
+    abook = Book(title!, author!, info, coverstr, i);
+    bookListPV.addBook(abook);
   }
 }

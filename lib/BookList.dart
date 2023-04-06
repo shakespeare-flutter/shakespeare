@@ -30,6 +30,7 @@ class _BookListState extends State<BookList> {
 
   @override
   Widget build(BuildContext context) {
+    //밑에 세줄은 provider로 이미 저장되어있던 책들을 불러와 리스트를 만드는 과정이다.
     bookListProvider bookListPV = Provider.of<bookListProvider>(context);
     SharedPreferencesProvider userDataPV =
         Provider.of<SharedPreferencesProvider>(context);
@@ -76,6 +77,7 @@ class _BookListState extends State<BookList> {
                                 ],
                               ),
                             );
+                            setState(() {});
                           } else {
                             String newPath=file.path.toString();
                             saveBookPath(newPath, userDataPV.userdata);
@@ -108,7 +110,7 @@ class _BookListState extends State<BookList> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 ListView.builder(
-                                    padding: const EdgeInsets.all(8),
+                                    padding: const EdgeInsets.all(20),
                                     itemCount: bookListPV.bookList.length,
                                     shrinkWrap: true,
                                     itemBuilder:
@@ -121,11 +123,13 @@ class _BookListState extends State<BookList> {
                                                   builder: (context) =>
                                                       Viewer(openBookPath: File(userDataPV.userdata.getStringList('bookPath')![index]))));
                                         },
-                                        child: Row(
+                                        child: Column(
+                                          children: [
+                                          Row(
                                           children: [
                                             wid.Image.asset(
                                               bookListPV.bookList[index].cover,
-                                              width: 150,
+                                              width: 115,
                                             ),
                                             Expanded(
                                               child: Container(
@@ -176,12 +180,20 @@ class _BookListState extends State<BookList> {
                                                   ],
                                                 ),
                                               ),
+                                            ),
+
+                                          ],
+                                        ),
+                                            Container(
+                                              height: 15,
                                             )
                                           ],
                                         ),
                                       );
+
                                     })
-                              ]))
+                              ])),
+
                     ],
                   ));
             }

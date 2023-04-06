@@ -10,10 +10,18 @@ import 'package:image/image.dart' as image;
 import 'package:flutter/widgets.dart' as wid;
 import 'SelectedBooks.dart';
 
-
+/*sharedpreferenc란, 핸드폰의 간단한 내부저장소 느낌.
+추가된 책의 경로들(string)을 string list를 저장해두고,
+메인화면 로딩에서 그 리스트들을 불러와, 그걸 기반으로 책(selectedbooks에
+ 선언한 class) 리스트 provider(어플 내내 손쉽게
+ 접근할 수 있는 일종의 전역변수 같은 것. 어떤화면에서도 접근하기 용의함)를 만든다.
+ 즉, 초기화 한다.
+ */
 late SharedPreferences pref;
+
 List<String> bookPath = [];
 
+//메인함수
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   pref = await SharedPreferences.getInstance();
@@ -138,7 +146,7 @@ Future<void> initBookList(
     } else {
       if (cover != null) {
         File('location/' + title.toString() + '.png')
-            .writeAsBytesSync(image.encodePng(cover!));
+            .writeAsBytesSync(image.encodePng(epubBook.CoverImage!));
         coverstr = 'location/' + title.toString() + '.png';
       } else {
         print("Error Saving Cover Image");

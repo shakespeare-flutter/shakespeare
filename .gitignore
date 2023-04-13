@@ -46,3 +46,4 @@ app.*.map.json
 
 # env
 .env
+lib/NLP/env/env.g.dart

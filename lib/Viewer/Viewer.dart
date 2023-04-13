@@ -7,6 +7,8 @@ import 'dart:async';
 import 'package:epub_view/epub_view.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
+import 'package:flutter/widgets.dart' as wid;
+import 'package:shakespeare/SpotifyAPi/music.dart';
 
 class Viewer extends StatefulWidget {
   const Viewer({Key? key, required this.openBookPath}) : super(key: key);
@@ -62,12 +64,7 @@ class _ViewerState extends State<Viewer>{
           IconButton(
             icon: const Icon(Icons.music_note),
             color: Colors.white,
-            onPressed: () {
-              Navigator.of(context).push(FullScreenModal(
-              title: 'This is a title',
-              description: 'Just some dummy description text'));
-
-            }
+            onPressed: () { Navigator.of(context).push(FullScreenModal()); }
           ),
           IconButton(
             icon: const Icon(Icons.arrow_back),
@@ -109,15 +106,6 @@ class _ViewerState extends State<Viewer>{
   }
 
 class FullScreenModal extends ModalRoute {
-  // variables passed from the parent widget
-  final String title;
-  final String description;
-
-  // constructor
-  FullScreenModal({
-    required this.title,
-    required this.description,
-  });
 
   @override
   Duration get transitionDuration => const Duration(milliseconds: 500);
@@ -134,6 +122,7 @@ class FullScreenModal extends ModalRoute {
   @override
   bool get maintainState => true;
 
+  // TODO: MUSIC PLAYER
   @override
   Widget buildPage(
       BuildContext context,
@@ -144,33 +133,20 @@ class FullScreenModal extends ModalRoute {
       type: MaterialType.transparency,
       child: Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              title,
-              style: const TextStyle(color: Colors.white, fontSize: 40.0),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            Text(description,
-                style: const TextStyle(color: Colors.white, fontSize: 18)),
-            const SizedBox(
-              height: 30,
-            ),
-            ElevatedButton.icon(
-              onPressed: () {
-                // close the modal dialog and return some data if needed
-                Navigator.pop(context, [
-                  'This message was padded from the modal',
-                  'KindaCode.com'
-                ]);
-              },
-              icon: const Icon(Icons.close),
-              label: const Text('Close'),
+            MusicMetaData(),
+            const SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                MusicControlButton(),
+                NextMusicButton()
+              ],
             )
-          ],
-        ),
+          ]
+        )
       ),
     );
   }

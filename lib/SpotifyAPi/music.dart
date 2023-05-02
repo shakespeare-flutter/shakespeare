@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:async/async.dart';
 
 enum PlayState {
@@ -14,14 +14,17 @@ enum PlayState {
   playing
 }
 
+const String address = 'http://10.0.2.2:5000/music?id='; // for emulator
+//const String address = 'http://192.168.25.4:5000/music?id='; // for device
+
 class MusicPlayer {
   final AudioPlayer _audioPlayer = AudioPlayer();
   final MusicSelector _musicSelector = MusicSelector();
 
-  static const Duration fadeOutTime = Duration(milliseconds: 1500);
-  static const Duration fadeInTime = Duration(milliseconds: 1500);
+  static const Duration fadeOutTime = Duration(milliseconds: 2000);
+  static const Duration fadeInTime = Duration(milliseconds: 2000);
   static const Duration interval = Duration(milliseconds: 500);
-  static const Duration tick = Duration(milliseconds: 40);
+  static const Duration tick = Duration(milliseconds: 50);
 
   PlayState _state = PlayState.none;
   PlayState get state => _state;
@@ -35,7 +38,7 @@ class MusicPlayer {
   static final MusicPlayer _instance = MusicPlayer._privateConstructor();
   factory MusicPlayer() => _instance;
   MusicPlayer._privateConstructor() {
-    _audioPlayer.setReleaseMode(ReleaseMode.loop);
+    _audioPlayer.setLoopMode(LoopMode.all);
     _musicSelector.stream.listen((String path) {
       if (state == PlayState.playing) {
         play();
@@ -49,29 +52,30 @@ class MusicPlayer {
   final StreamController<PlayState> _controller = StreamController<PlayState>.broadcast();
   Stream<PlayState> get stream => _controller.stream;
 
-  void _fadeInAndOut(String? path) async {
+  void _fadeInAndOut(String? music) async {
     Future<void> inner(_Token op) async{
-      double t;
+      int t;
       if (state != PlayState.none) {
-        if (path == null) {
+        if (music == null) {
           _updateState(PlayState.pausing);
         }
         else {
           _updateState(PlayState.playing);
         }
 
-        t = fadeOutTime.inMilliseconds.toDouble() * _volume;
+        t = (fadeOutTime.inMilliseconds * _volume).toInt();
         while (t >= 0) {
           await Future.delayed(tick);
           if (op.isCanceled) {
             return;
           }
-          _volume = (t -= tick.inMilliseconds) / fadeOutTime.inMilliseconds;
+          t -= tick.inMilliseconds;
+          _volume = t.toDouble() / fadeOutTime.inMilliseconds;
           _audioPlayer.setVolume(_volume);
         }
         _audioPlayer.setVolume(_volume = 0);
         _audioPlayer.pause();
-        if (path == null) {
+        if (music == null) {
           _updateState(PlayState.none);
           return;
         }
@@ -79,15 +83,22 @@ class MusicPlayer {
         if (op.isCanceled) {
           return;
         }
-      }
-
-      if (path == null) {
-        _updateState(PlayState.none);
-        return;
+      } else {
+        if (music == null) {
+          _updateState(PlayState.none);
+          return;
+        }
+        else {
+          _updateState(PlayState.playing);
+        }
       }
 
       try {
-        await _audioPlayer.play(AssetSource(path));
+        await _audioPlayer.setUrl('$address$music');
+        if (op.isCanceled) {
+          return;
+        }
+        _audioPlayer.play();
       }
       catch (e) {
         _updateState(PlayState.none);
@@ -96,16 +107,16 @@ class MusicPlayer {
       if (op.isCanceled) {
         return;
       }
-      _updateState(PlayState.playing);
 
       // fade in
-      t = fadeInTime.inMilliseconds.toDouble() * (1 - _volume);
+      t = 0;
       while (t < fadeInTime.inMilliseconds) {
         await Future.delayed(tick);
         if (op.isCanceled) {
           return;
         }
-        _volume = (t += tick.inMilliseconds) / fadeInTime.inMilliseconds;
+        t += tick.inMilliseconds;
+        _volume = t.toDouble() / fadeInTime.inMilliseconds;
         _audioPlayer.setVolume(_volume);
       }
       _audioPlayer.setVolume(_volume = 1);
@@ -114,7 +125,7 @@ class MusicPlayer {
     _future = _Token();
     _future!.act(inner(_future!));
   }
-  void play() => _fadeInAndOut(_musicSelector.asset);
+  void play() => _fadeInAndOut(_musicSelector.music);
   void pause() => _fadeInAndOut(null);
   void dispose() => _audioPlayer.dispose();
 }
@@ -167,17 +178,13 @@ class MusicControlButton extends StatelessWidget {
 
 // 임시 음악 선정
 class MusicSelector {
-  List<String> list = [
-    'audio/temp1.mp3',
-    'audio/temp2.mp3',
-    'audio/temp3.mp3',
-  ];
+  List<String> list = [ '1', '2', '3' ];
 
   static final MusicSelector _instance = MusicSelector._privateConstructor();
   factory MusicSelector() => _instance;
 
-  String _asset = 'Title';
-  String get asset => _asset;
+  String _music = 'Title';
+  String get music => _music;
 
   int _index = -1;
   MusicSelector._privateConstructor() {
@@ -189,8 +196,8 @@ class MusicSelector {
     if (_index >= list.length) {
       _index = 0;
     }
-    _asset = list[_index];
-    _controller.add(_asset);
+    _music = list[_index];
+    _controller.add(_music);
   }
 
   final StreamController<String> _controller = StreamController<String>.broadcast();
@@ -220,7 +227,7 @@ class MusicMetaData extends StatelessWidget {
     return StreamBuilder<String>(
         stream: selector.stream,
         builder: (context, snapshot) {
-          String data = snapshot.data ?? selector.asset;
+          String data = snapshot.data ?? selector.music;
           return Column(
             children: [
               Image.asset(

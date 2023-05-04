@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:epub_view/epub_view.dart';
+import 'package:epub_view_enhanced/epub_view_enhanced.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
     bookListProvider bookListPV = Provider.of<bookListProvider>(context);
 
     bookPath = userDataPV.userdata.getStringList('bookPath')!;
-    initBookList(bookPath, bookListPV);
+    initBookList(bookPath, bookListPV,userDataPV);
 
     return MaterialApp(
       title: 'Flutter Demo',
@@ -129,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 Future<void> initBookList(
-    List<String> bookPath, bookListProvider bookListPV) async {
+    List<String> bookPath, bookListProvider bookListPV,SharedPreferencesProvider userDataPV) async {
   Book abook;
   String coverstr = 'assets/samplecover.jpg';
   for (int i = 0; i < bookPath.length; i++) {
@@ -140,20 +140,21 @@ Future<void> initBookList(
     String info = "very fun";
     String? title = epubBook.Title;
     String? author = epubBook.Author;
-    image.Image? cover = epubBook.CoverImage;
-    if (File('location/' + title.toString() + '.png').existsSync()) {
-      print("File exists");
-    } else {
-      if (cover != null) {
-        File('location/' + title.toString() + '.png')
-            .writeAsBytesSync(image.encodePng(epubBook.CoverImage!));
-        coverstr = 'location/' + title.toString() + '.png';
-      } else {
-        print("Error Saving Cover Image");
+
+
         coverstr = 'assets/samplecover.jpg';
-      }
+
+    List<String>? bookMark;
+    if(!pref.containsKey(title!+'bookmarks')){
+      await pref.setStringList(title!+'bookmarks', <String>[]);
+      bookMark=pref.getStringList(title!+'bookmarks');
     }
-    abook = Book(title!, author!, info, coverstr, i);
+    else {
+      bookMark=pref.getStringList(title!+'bookmarks');
+    }
+
+
+    abook = Book(title!, author!, info, coverstr, bookMark!,i);
     bookListPV.addBook(abook);
   }
 }

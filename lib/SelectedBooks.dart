@@ -45,6 +45,7 @@ class bookPathProvider with ChangeNotifier{
 
 class Book{
   String title,author,info,cover;
+  List<String> bookmark;
   int idx;
-  Book(this.title, this.author, this.info,this.cover,this.idx);
+  Book(this.title, this.author, this.info,this.cover,this.bookmark,this.idx);
 }

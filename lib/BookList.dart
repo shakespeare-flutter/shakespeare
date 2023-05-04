@@ -1,4 +1,4 @@
-import 'package:epub_view/epub_view.dart';
+import 'package:epub_view_enhanced/epub_view_enhanced.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -81,7 +81,7 @@ class _BookListState extends State<BookList> {
                           } else {
                             String newPath=file.path.toString();
                             saveBookPath(newPath, userDataPV.userdata);
-                            addBookToPv(newPath, bookListPV);
+                            addBookToPv(newPath, bookListPV,userDataPV.userdata);
                             setState(() {});
                           }
                         } else {
@@ -121,7 +121,9 @@ class _BookListState extends State<BookList> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      Viewer(openBookPath: File(userDataPV.userdata.getStringList('bookPath')![index]))));
+                                                      Viewer(openBookPath: File(userDataPV.userdata.getStringList('bookPath')![index]), bookTitle: bookListPV
+                                                          .bookList[index]
+                                                          .title )));
                                         },
                                         child: Column(
                                           children: [
@@ -216,6 +218,7 @@ void saveBookPath(String bookP, SharedPreferences prefs) {
   List<String>? temppaths= prefs.getStringList('bookPath');
   temppaths?.add(bookP);
   prefs.setStringList('bookPath', temppaths!);
+
 }
 
 void clearUserData(SharedPreferences prefs) {
@@ -225,7 +228,7 @@ void clearUserData(SharedPreferences prefs) {
 
 
 
-Future<List<Book>> addBookToPv(String bookPath, bookListProvider bookListPV) async {
+Future<List<Book>> addBookToPv(String bookPath, bookListProvider bookListPV,SharedPreferences prefs) async {
   Book abook;
   String coverstr = 'assets/samplecover.jpg';
 
@@ -237,20 +240,13 @@ Future<List<Book>> addBookToPv(String bookPath, bookListProvider bookListPV) asy
   String info = "very fun";
   String? title = epubBook.Title;
   String? author = epubBook.Author;
-  image.Image? cover = epubBook.CoverImage;
-  if (File('location/' + title.toString() + '.png').existsSync()) {
-    print("File exists");
-  } else {
-    if (cover != null) {
-      File('location/' + title.toString() + '.png')
-          .writeAsBytesSync(image.encodePng(cover!));
-      coverstr = 'location/' + title.toString() + '.png';
-    } else {
-      print("Error Saving Cover Image");
+
       coverstr = 'assets/samplecover.jpg';
-    }
-  }
-  abook = Book(title!, author!, info, coverstr, bookListPV.bookList.length);
+
+  List<String>? bookMark;
+  await prefs.setStringList(title!+'bookmarks', <String>[]);
+  bookMark=prefs.getStringList(title!+'bookmarks');
+  abook = Book(title!, author!, info, coverstr, bookMark!,bookListPV.bookList.length);
   bookListPV.addBook(abook);
 
   return bookListPV.bookList;

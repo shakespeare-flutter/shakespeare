@@ -40,7 +40,7 @@ dependencies:
   flutter_provider: ^2.1.0
   provider: ^6.0.5
   webview_flutter: ^4.0.7
-  epub_view: ^3.0.0
+
   epubx: ^3.0.0
   file_picker: ^5.2.6
   path_provider: ^2.0.14
@@ -50,6 +50,7 @@ dependencies:
   envied: ^0.3.0
 
   just_audio:
+  epub_view_enhanced: ^1.5.0
 
 dev_dependencies:
   flutter_test:

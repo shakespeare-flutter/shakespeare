@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:epub_view_enhanced/epub_view_enhanced.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,6 @@ void main() async{
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_)=>bookListProvider()),
-        ChangeNotifierProvider(create: (_)=>bookPathProvider()),
         ChangeNotifierProvider(create: (_)=>SharedPreferencesProvider())
       ],
       child: MyApp(),
@@ -145,6 +145,8 @@ Future<void> initBookList(
         coverstr = 'assets/samplecover.jpg';
 
     List<String>? bookMark;
+    bool? isInServer;
+    String? id;
     if(!pref.containsKey(title!+'bookmarks')){
       await pref.setStringList(title!+'bookmarks', <String>[]);
       bookMark=pref.getStringList(title!+'bookmarks');
@@ -152,9 +154,22 @@ Future<void> initBookList(
     else {
       bookMark=pref.getStringList(title!+'bookmarks');
     }
+    if(!pref.containsKey(title!+'isInServer')){
+      await pref.setBool(title!+'isInServer', false);
+      isInServer=pref.getBool(title!+'isInServer');
+    }
+    else {
+      isInServer=pref.getBool(title!+'isInServer');
+    }
+    if(!pref.containsKey(title!+'id')){
+      await pref.setString(title!+'id', '');
+      id=pref.getString(title!+'id');
+    }
+    else {
+      id=pref.getString(title!+'id');
+    }
 
-
-    abook = Book(title!, author!, info, coverstr, bookMark!,i);
+    abook = Book(title!, author!, info, coverstr, bookMark!,i,isInServer!,id!);
     bookListPV.addBook(abook);
   }
 }

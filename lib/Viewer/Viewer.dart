@@ -12,10 +12,11 @@ import '../system.dart';
 
 
 class Viewer extends StatefulWidget {
-  const Viewer({Key? key, required this.openBookPath, required this.bookTitle})
+  const Viewer({Key? key, required this.openBookPath, required this.bookTitle, required this.responseBody})
       : super(key: key);
   final File openBookPath;
   final String bookTitle;
+  final List<dynamic> responseBody;
 
   @override
   State<Viewer> createState() => _ViewerState();
@@ -97,7 +98,7 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
             icon: const Icon(Icons.arrow_back),
             color: Colors.white,
               onPressed: () {
-                clearUserData(userDataPV,bookName);
+
                 Navigator.pop(context);
                 setState(() {});
               }
@@ -211,6 +212,7 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
 
       body: EpubView(
         controller: _epubReaderController,
+        jsonBody: widget.responseBody,
       ),
     );
   }

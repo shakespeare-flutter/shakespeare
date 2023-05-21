@@ -11,3 +11,4 @@ class SharedPreferencesProvider with ChangeNotifier{
 
   SharedPreferences get userdata => _userdata;
 }
+

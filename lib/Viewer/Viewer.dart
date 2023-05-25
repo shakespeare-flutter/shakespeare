@@ -10,6 +10,7 @@ import 'package:shakespeare/SpotifyAPi/music.dart';
 import '../epub_view_enhanced.dart';
 import '../system.dart';
 
+final ValueNotifier<int> _counter = ValueNotifier<int>(0);
 
 class Viewer extends StatefulWidget {
   const Viewer({Key? key, required this.openBookPath, required this.bookTitle, required this.responseBody})
@@ -214,6 +215,7 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
       body: EpubView(
         controller: _epubReaderController,
         jsonBody: widget.responseBody,
+        musicPV: musicPV
       ),
     );
   }
@@ -277,6 +279,10 @@ class FullScreenModal extends ModalRoute {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
+    MusicProvider musicPV2=Provider.of<MusicProvider>(context); //widget 내부에 이처럼 정의
+    String musicName=musicPV2.ENG; // 업데이트된 클래스 사용
+
+
     return Material(
       type: MaterialType.transparency,
       child: Center(
@@ -284,7 +290,7 @@ class FullScreenModal extends ModalRoute {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-            MusicMetaData(),
+            MusicMetaData(musicPV2: musicPV2),
             const SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

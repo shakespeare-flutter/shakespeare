@@ -3,10 +3,13 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_provider/flutter_provider.dart';
 import 'package:path/path.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:async/async.dart';
+
+import '../SelectedBooks.dart';
 
 enum PlayState {
   none,
@@ -94,7 +97,7 @@ class MusicPlayer {
       }
 
       try {
-        await _audioPlayer.setUrl('$address$music');
+        await _audioPlayer.setUrl(music);
         if (op.isCanceled) {
           return;
         }
@@ -220,14 +223,20 @@ class NextMusicButton extends StatelessWidget {
 }
 
 class MusicMetaData extends StatelessWidget {
+  MusicMetaData({super.key, required this.musicPV2});
   final MusicSelector selector = MusicSelector();
-  MusicMetaData({super.key});
+  final MusicProvider musicPV2;  //넘겨받은 인자
+
+
   @override
   Widget build(BuildContext context) {
+    String musicName=musicPV2.ENG; //사용
+    String musicMood=musicPV2.MOOD; //사용
+
     return StreamBuilder<String>(
         stream: selector.stream,
         builder: (context, snapshot) {
-          String data = snapshot.data ?? selector.music;
+          String data = musicPV2.music; //바꿔본 부분
           return Column(
             children: [
               Image.asset(
@@ -236,7 +245,7 @@ class MusicMetaData extends StatelessWidget {
                 width: 256,
               ),
               Text(basenameWithoutExtension(data), style: const TextStyle(color: Colors.white, fontSize: 40)),
-              const Text('Artists', style: TextStyle(color: Colors.white, fontSize: 24)),
+              Text(musicMood, style: TextStyle(color: Colors.white, fontSize: 24)),
             ]
           );
         });

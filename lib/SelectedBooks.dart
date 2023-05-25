@@ -18,11 +18,11 @@ class bookListProvider with ChangeNotifier{
 }
 
 class MusicProvider with ChangeNotifier{
-  String _music='';
+  String _music=''; //stream url 담김
   String ENG='',KOR='',GENRE='',TEMPO='',MOOD='',INSTRUMENT='';
   String get music => _music;
   void updateMusic(var shop,String ENGI,String KORI,String GENREI,String TEMPOI,
-      String MOODI,String INSTRUMENTI){
+      String MOODI,String INSTRUMENTI){ //음악 바뀔때마다 음악 정보 업데이트 됨
     _music=shop;
     KOR=KORI;
     ENG=ENGI;

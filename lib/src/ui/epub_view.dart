@@ -46,6 +46,7 @@ class EpubView extends StatefulWidget {
     ),
     this.shrinkWrap = false,
     required this.jsonBody,
+    required this.musicPV,
     Key? key,
   }) : super(key: key);
 
@@ -68,6 +69,7 @@ class EpubView extends StatefulWidget {
   //Json
   final List<dynamic> jsonBody;
 
+  final MusicProvider musicPV;
 
   @override
   State<EpubView> createState() => _EpubViewState();
@@ -221,21 +223,20 @@ class _EpubViewState extends State<EpubView> {
         var responseBody2 = json.decode(response_server2.body);
         Map<String, dynamic> responseMap2 = responseBody2;
 
-        /*MusicProvider musicPV = Provider.of<MusicProvider>(context);
-        musicPV.updateMusic(
+        widget.musicPV.updateMusic(
             CommonUri + '/music?id='+ id, //streaming uri
             responseMap2['KOR'],
             responseMap2['ENG'],
             responseMap2['GENRE'],
             responseMap2['TEMPO'],
             responseMap2['MOOD'],
-            responseMap2['INSTRMENT']);
-         */
+            responseMap2['INSTRUMENT']);
+
 
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(cfi! + '\n ||||' + listdatas[listDataIndex]["cfi"]),
+            content: Text(cfi! + '\n ||||' + listdatas[listDataIndex]["cfi"]+ '\n ||||' + widget.musicPV.ENG),
           ),
         );
       }

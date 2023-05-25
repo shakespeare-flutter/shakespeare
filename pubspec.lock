@@ -250,22 +250,13 @@ packages:
     source: hosted
     version: "0.3.0+3"
   epub_parser:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: epub_parser
       sha256: a620d67dd1de88ca91e732e95faece9b4c673b7875599359e76c966367158868
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
-  epub_view_enhanced:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "28cf690d73c927ccf1e4c651fb09c92577cbaabe"
-      url: "https://github.com/guylee97/epub_view_enhanced.git"
-    source: git
-    version: "1.6.0"
   epubx:
     dependency: "direct main"
     description:
@@ -275,7 +266,7 @@ packages:
     source: hosted
     version: "3.0.0"
   equatable:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: equatable
       sha256: c2b87cb7756efdf69892005af546c56c0b5037f54d2a88269b4f347a505e3ca2
@@ -344,7 +335,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_html:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_html
       sha256: ccb810fcabfce3a7ffaca46e458323915ac7e7fc59082c7357ff848972c02230
@@ -442,7 +433,7 @@ packages:
     source: hosted
     version: "2.3.0"
   html:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: html
       sha256: "58e3491f7bf0b6a4ea5110c0c688877460d1a6366731155c4a4580e7ded773e8"
@@ -498,13 +489,21 @@ packages:
     source: hosted
     version: "0.6.5"
   json_annotation:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: json_annotation
       sha256: b10a7b2ff83d83c777edba3c6a0f97045ddadd56c944e1a23a3fdf43a1bf4467
       url: "https://pub.dev"
     source: hosted
     version: "4.8.1"
+  json_serializable:
+    dependency: "direct dev"
+    description:
+      name: json_serializable
+      sha256: "43793352f90efa5d8b251893a63d767b2f7c833120e3cc02adad55eefec04dc7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.6.2"
   just_audio:
     dependency: "direct main"
     description:
@@ -778,7 +777,7 @@ packages:
     source: hosted
     version: "0.27.7"
   scrollable_positioned_list:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: scrollable_positioned_list
       sha256: "1b54d5f1329a1e263269abc9e2543d90806131aa14fe7c6062a8054d57249287"
@@ -870,6 +869,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.2"
+  source_helper:
+    dependency: transitive
+    description:
+      name: source_helper
+      sha256: "3b67aade1d52416149c633ba1bb36df44d97c6b51830c2198e934e3fca87ca1f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.3.3"
   source_span:
     dependency: transitive
     description:
@@ -935,7 +942,7 @@ packages:
     source: hosted
     version: "1.0.1"
   transparent_image:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: transparent_image
       sha256: e8991d955a2094e197ca24c645efec2faf4285772a4746126ca12875e54ca02f
@@ -959,7 +966,7 @@ packages:
     source: hosted
     version: "1.3.2"
   universal_file:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: universal_file
       sha256: d1a957fccaad2a32023b62fe435b273ee47aaf2eb804709795e4bf4afff50960

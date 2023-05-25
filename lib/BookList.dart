@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:epub_view_enhanced/epub_view_enhanced.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -17,6 +16,8 @@ import 'package:shakespeare/system.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'epub_view_enhanced.dart';
 
 List<String> bookPath = [];
 late Future<List<Book>> booklist;
@@ -83,6 +84,7 @@ class _BookListState extends State<BookList> {
                           } else {
                             String newPath = file.path.toString();
                             saveBookPath(newPath, userDataPV.userdata);
+
                             await addBookToPv(newPath, bookListPV, userDataPV.userdata);
                             await checkAndAddBookToServer(userDataPV.userdata, userDataPV, bookListPV, bookListPV.bookList.length-1);
                             setState(() {});
@@ -128,6 +130,7 @@ class _BookListState extends State<BookList> {
                                                       .bookList[index].title;
                                               if (bookListPV.bookList[index]
                                                   .id!=[]&&bookListPV.bookList[index].isExistInServer==true) {
+                                                bookListPV.bookList[index].analyzedData=await waitingResult(bookListPV.bookList[index].id, bookListPV.bookList[index].title);
                                                 Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
@@ -302,9 +305,9 @@ Future<List<Book>> makeBookList(
   return bookListPV.bookList;
 }
 
-Future<bool> checkBookInServer(String bookTitle) async {
+Future<bool> checkBookInServer() async {
   bool isExist = false;
-  String strUrl = "http://10.0.2.2:5000/book?id=1";
+  String strUrl = "http://10.0.2.2:5000/music_info?id=1";
   String id = 'default';
   var url = Uri.parse(strUrl);
   var response = await http.get(url);
@@ -312,6 +315,8 @@ Future<bool> checkBookInServer(String bookTitle) async {
   if (result == 200) {
     isExist = true;
   }
+  var decodedJson=json.decode(response.body);
+  var decodedJson2=decodedJson["ENG"];
   return isExist;
 }
 
@@ -333,9 +338,8 @@ Future<List<dynamic>> waitingResult(String id, String booktitle) async {
   String strUrl = "http://10.0.2.2:5000/book?id="+id;
   const timeOut = Duration(seconds: 5);
   var url = Uri.parse(strUrl);
-  var dataConvertedToJSON;
   bool isEnd=false;
-  var responsebobo;
+  List<dynamic> decodedJson2=[];
   List<Data> listdatas = [];
   while(isEnd==false){
     var response = await http.get(url);
@@ -344,17 +348,17 @@ Future<List<dynamic>> waitingResult(String id, String booktitle) async {
       Logger().d("not yet request data repeat process");
       await Future.delayed(const Duration(milliseconds: 3000));
     } else {
-      responsebobo=utf8.decode(response.bodyBytes);
+      Map decodedJson=jsonDecode(jsonDecode(response.body));
+      decodedJson2=decodedJson["data"];
       isEnd=true;
       break;
     }
   }
-  List<dynamic> decodedJson=jsonDecode(responsebobo)['data'];
 
 
   Logger().d("receive result");
 
-  return decodedJson;
+  return decodedJson2;
 }
 
 

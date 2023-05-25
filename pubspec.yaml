@@ -47,10 +47,18 @@ dependencies:
 
   dart_openai: ^1.9.1
   envied: ^0.3.0
+  epub_parser: ^3.0.0
+  equatable: ^2.0.3
+  html: ^0.15.0
+  flutter_html: ^2.2.1
+  scrollable_positioned_list: ^0.3.2
+  universal_file: ^1.0.0
+  transparent_image: ^2.0.0
+  json_annotation: ^4.8.1
 
   just_audio:
-  epub_view_enhanced:
-    git: https://github.com/guylee97/epub_view_enhanced.git
+  #epub_view_enhanced:
+    #git: https://github.com/guylee97/epub_view_enhanced.git
 
   http: ^0.13.6
   dio: ^5.1.2
@@ -69,6 +77,8 @@ dev_dependencies:
   flutter_native_splash: ^2.2.0+1
   build_runner:
   envied_generator: ^0.3.0
+
+  json_serializable: ^6.6.2
 
 
 # For information on the generic Dart part of this file, see the

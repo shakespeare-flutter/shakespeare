@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shakespeare/SelectedBooks.dart';
 import 'dart:async';
-import 'package:epub_view_enhanced/epub_view_enhanced.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:flutter/widgets.dart' as wid;
 import 'package:shakespeare/SpotifyAPi/music.dart';
 
+import '../epub_view_enhanced.dart';
 import '../system.dart';
 
 
@@ -54,6 +54,7 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
     String bookName=widget.bookTitle+'bookmarks';
     List<String>? temp1=userDataPV.userdata.getStringList(bookName);
     Future<List<String>> bookMarks=updateBookMark(temp1!);
+    MusicProvider musicPV=Provider.of<MusicProvider>(context);
     void _openEndDrawer() {
       _scaffoldKey.currentState!.openEndDrawer();
     }
@@ -230,7 +231,6 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
             onPressed: () {
               _epubReaderController.gotoEpubCfi(cfi);
               setState(() {
-
               });
             },
           ),

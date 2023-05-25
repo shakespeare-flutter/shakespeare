@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:epub_view_enhanced/epub_view_enhanced.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'BookList.dart';
 import 'SelectedBooks.dart';
+import 'epub_view_enhanced.dart';
 import 'system.dart';
 import 'package:image/image.dart' as image;
 import 'package:flutter/widgets.dart' as wid;
@@ -33,7 +34,8 @@ void main() async{
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_)=>bookListProvider()),
-        ChangeNotifierProvider(create: (_)=>SharedPreferencesProvider())
+        ChangeNotifierProvider(create: (_)=>SharedPreferencesProvider()),
+        ChangeNotifierProvider(create: (_)=>MusicProvider())
       ],
       child: MyApp(),
     ),

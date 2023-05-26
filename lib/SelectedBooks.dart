@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:image/image.dart';
+import 'package:shakespeare/SpotifyAPi/music.dart';
 import 'package:shakespeare/system.dart';
 
 class bookListProvider with ChangeNotifier{
@@ -31,6 +32,7 @@ class MusicProvider with ChangeNotifier{
     MOOD=MOODI;
     INSTRUMENT=INSTRUMENTI;
     notifyListeners();
+    MusicPlayer.instance.play(music);
   }
 }
 

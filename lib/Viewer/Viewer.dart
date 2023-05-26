@@ -291,11 +291,11 @@ class FullScreenModal extends ModalRoute {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
             MusicMetaData(musicPV2: musicPV2),
-            const SizedBox(height: 15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [MusicControlButton(), NextMusicButton()],
-            )
+            // const SizedBox(height: 15),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //   children: [MusicControlButton(), NextMusicButton()],
+            // )
           ])),
     );
   }

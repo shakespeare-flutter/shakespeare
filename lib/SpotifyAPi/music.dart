@@ -22,7 +22,7 @@ const String address = 'http://10.0.2.2:5000/music?id='; // for emulator
 
 class MusicPlayer {
   final AudioPlayer _audioPlayer = AudioPlayer();
-  final MusicSelector _musicSelector = MusicSelector();
+  //final MusicSelector _musicSelector = MusicSelector();
 
   static const Duration fadeOutTime = Duration(milliseconds: 2000);
   static const Duration fadeInTime = Duration(milliseconds: 2000);
@@ -38,22 +38,23 @@ class MusicPlayer {
     _controller.add(_state);
   }
 
+  static MusicPlayer get instance => _instance;
   static final MusicPlayer _instance = MusicPlayer._privateConstructor();
   factory MusicPlayer() => _instance;
   MusicPlayer._privateConstructor() {
     _audioPlayer.setLoopMode(LoopMode.all);
-    _musicSelector.stream.listen((String path) {
-      if (state == PlayState.playing) {
-        play();
-      }
-    });
+    // _musicSelector.stream.listen((String path) {
+    //   if (state == PlayState.playing) {
+    //     play();
+    //   }
+    // });
   }
 
   _Token? _future;
   double _volume = 0;
 
   final StreamController<PlayState> _controller = StreamController<PlayState>.broadcast();
-  Stream<PlayState> get stream => _controller.stream;
+  //Stream<PlayState> get stream => _controller.stream;
 
   void _fadeInAndOut(String? music) async {
     Future<void> inner(_Token op) async{
@@ -128,7 +129,20 @@ class MusicPlayer {
     _future = _Token();
     _future!.act(inner(_future!));
   }
-  void play() => _fadeInAndOut(_musicSelector.music);
+
+  String? last = null;
+  void play(String? music) {
+    if (music == null){
+      return;
+    }
+    if (last != null) {
+      if (music.compareTo(last!) == 0) {
+        return;
+      }
+    }
+    last = music;
+    _fadeInAndOut(music);
+  }
   void pause() => _fadeInAndOut(null);
   void dispose() => _audioPlayer.dispose();
 }
@@ -147,7 +161,7 @@ class _Token {
     await _op?.cancel();
   }
 }
-
+/*
 class MusicControlButton extends StatelessWidget {
   final MusicPlayer player = MusicPlayer();
   MusicControlButton({super.key});
@@ -221,10 +235,10 @@ class NextMusicButton extends StatelessWidget {
     );
   }
 }
-
+*/
 class MusicMetaData extends StatelessWidget {
   MusicMetaData({super.key, required this.musicPV2});
-  final MusicSelector selector = MusicSelector();
+  //final MusicSelector selector = MusicSelector();
   final MusicProvider musicPV2;  //넘겨받은 인자
 
 
@@ -234,17 +248,17 @@ class MusicMetaData extends StatelessWidget {
     String musicMood=musicPV2.MOOD; //사용
 
     return StreamBuilder<String>(
-        stream: selector.stream,
+        //stream: selector.stream,
         builder: (context, snapshot) {
           String data = musicPV2.music; //바꿔본 부분
           return Column(
             children: [
-              Image.asset(
-                'assets/title.png',
-                height: 256,
-                width: 256,
-              ),
-              Text(basenameWithoutExtension(data), style: const TextStyle(color: Colors.white, fontSize: 40)),
+              // Image.asset(
+              //   'assets/title.png',
+              //   height: 256,
+              //   width: 256,
+              // ),
+              Text(musicName, style: const TextStyle(color: Colors.white, fontSize: 40)),
               Text(musicMood, style: TextStyle(color: Colors.white, fontSize: 24)),
             ]
           );

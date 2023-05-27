@@ -58,7 +58,7 @@ dependencies:
 
   just_audio:
   #epub_view_enhanced:
-    #git: https://github.com/guylee97/epub_view_enhanced.git
+  #git: https://github.com/guylee97/epub_view_enhanced.git
 
   http: ^0.13.6
   dio: ^5.1.2
@@ -94,7 +94,6 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
-    - assets/audio/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

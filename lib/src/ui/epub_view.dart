@@ -28,8 +28,8 @@ part '../helpers/epub_view_builders.dart';
 
 const _minTrailingEdge = 0.55;
 const _minLeadingEdge = -0.05;
-const String CommonUri="http://43.202.32.27:5000";
-//const String CommonUri=""
+//const String CommonUri="http://43.202.32.27:5000";
+const String CommonUri="http://10.210.60.153:5000"; //서버 url 바뀔시 수정
 
 typedef ExternalLinkPressed = void Function(String href);
 
@@ -88,6 +88,7 @@ class _EpubViewState extends State<EpubView> {
   int highlightedPara = -1;
   int positionTemp=0;
   String? cfi;
+  String id='';
   List<dynamic> listdatas = [];
   EpubController get _controller => widget.controller;
 
@@ -205,7 +206,7 @@ class _EpubViewState extends State<EpubView> {
         String str_url_server = CommonUri + '/music';
         String? redirectUrl = '';
         var url_server = Uri.parse(str_url_server);
-        http.Response response_server = await http.post(
+        /*http.Response response_server = await http.post(
             url_server,
             headers: //<String, String>
             {
@@ -215,26 +216,27 @@ class _EpubViewState extends State<EpubView> {
         );
 
         var responseBody = utf8.decode(response_server.bodyBytes);
-        var dataConvertedToJSON_server = jsonDecode(responseBody);
-        String id = dataConvertedToJSON_server['id'];
+        var dataConvertedToJSON_server = jsonDecode(responseBody);*/
 
-        String str_url_server2 = CommonUri + '/music_info?id='+ id;
-        var url_server2 = Uri.parse(str_url_server2);
-        http.Response response_server2 = await http.get(url_server2);
-        var responseBody2 = json.decode(utf8.decode(response_server2.bodyBytes));
-        Map<String, dynamic> responseMap2 = responseBody2;
-
-        widget.musicPV.updateMusic(
-            CommonUri + '/music?id='+ id, //streaming uri
-            responseMap2['KOR'],
-            responseMap2['ENG'],
-            responseMap2['GENRE'],
-            responseMap2['TEMPO'],
-            responseMap2['MOOD'],
-            responseMap2['INSTRUMENT']);
-
-
-
+        if(id!=widget.jsonBody[listDataIndex]['music']) {
+          id = widget.jsonBody[listDataIndex]['music'];
+          String str_url_server2 = CommonUri + '/music_info?id=' + id;
+          var url_server2 = Uri.parse(str_url_server2);
+          http.Response response_server2 = await http.get(url_server2);
+          var responseBody2 = json.decode(
+              utf8.decode(response_server2.bodyBytes));
+          Map<String, dynamic> responseMap2 = responseBody2;
+          var stream_url = id == '' ? null : CommonUri + '/music?id=' + id;
+          widget.musicPV.updateMusic(
+              stream_url,
+              //streaming uri
+              responseMap2['KOR'],
+              responseMap2['ENG'],
+              responseMap2['GENRE'],
+              responseMap2['TEMPO'],
+              responseMap2['MOOD'],
+              responseMap2['INSTRUMENT']);
+        }
       }
     }
     positionTemp=position.index;

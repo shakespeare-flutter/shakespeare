@@ -63,7 +63,8 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
       Navigator.of(context).pop();
     }
 
-    return Scaffold(
+    return new wid.WillPopScope(
+      child : new Scaffold(
       appBar: AppBar(
         key: _scaffoldKey,
         title: EpubViewActualChapter(
@@ -216,6 +217,11 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
         jsonBody: widget.responseBody,
         musicPV: musicPV
       ),
+    ),
+      onWillPop: () async {
+        MusicPlayer.instance.pause();
+        return false;
+      },
     );
   }
 

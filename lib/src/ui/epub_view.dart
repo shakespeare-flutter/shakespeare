@@ -28,7 +28,7 @@ part '../helpers/epub_view_builders.dart';
 
 const _minTrailingEdge = 0.55;
 const _minLeadingEdge = -0.05;
-const String CommonUri="http://10.0.2.2:5000";
+const String CommonUri="http://43.202.32.27:5000";
 //const String CommonUri=""
 
 typedef ExternalLinkPressed = void Function(String href);
@@ -221,7 +221,7 @@ class _EpubViewState extends State<EpubView> {
         String str_url_server2 = CommonUri + '/music_info?id='+ id;
         var url_server2 = Uri.parse(str_url_server2);
         http.Response response_server2 = await http.get(url_server2);
-        var responseBody2 = json.decode(response_server2.body);
+        var responseBody2 = json.decode(utf8.decode(response_server2.bodyBytes));
         Map<String, dynamic> responseMap2 = responseBody2;
 
         widget.musicPV.updateMusic(
@@ -235,11 +235,6 @@ class _EpubViewState extends State<EpubView> {
 
 
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(cfi! + '\n ||||' + listdatas[listDataIndex]["cfi"]+ '\n ||||' + widget.musicPV.ENG),
-          ),
-        );
       }
     }
     positionTemp=position.index;

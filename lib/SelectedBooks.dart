@@ -34,21 +34,16 @@ class MusicProvider with ChangeNotifier{
     notifyListeners();
     MusicPlayer.instance.play(music);
   }
-}
-
-class currentMusic{
-  String _musicstream='';
-  String ENG='',KOR='',GENRE='',TEMPO='',MOOD='',INSTRUMENT='';
-  String get music => _musicstream;
-  void updateMusic(var musicstream,String ENGI,String KORI,String GENREI,String TEMPOI,
-      String MOODI,String INSTRUMENTI){
-    _musicstream=musicstream;
-    KOR=KORI;
-    ENG=ENGI;
-    GENRE=GENREI;
-    TEMPO=TEMPOI;
-    MOOD=MOODI;
-    INSTRUMENT=INSTRUMENTI;
+  void voidMusic(){ //음악비우기
+    MusicPlayer.instance.pause();
+    _music='';
+    KOR='';
+    ENG='';
+    GENRE='';
+    TEMPO='';
+    MOOD='';
+    INSTRUMENT='';
+    notifyListeners();
   }
 }
 

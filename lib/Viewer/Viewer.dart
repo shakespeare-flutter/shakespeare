@@ -10,7 +10,6 @@ import 'package:shakespeare/SpotifyAPi/music.dart';
 import '../epub_view_enhanced.dart';
 import '../system.dart';
 
-final ValueNotifier<int> _counter = ValueNotifier<int>(0);
 
 class Viewer extends StatefulWidget {
   const Viewer({Key? key, required this.openBookPath, required this.bookTitle, required this.responseBody})

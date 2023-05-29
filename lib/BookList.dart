@@ -307,7 +307,7 @@ Future<List<Book>> makeBookList(
 
 Future<bool> checkBookInServer() async {
   bool isExist = false;
-  String strUrl = "http://10.0.2.2:5000/music_info?id=1";
+  String strUrl = CommonUri+"/music_info?id=1";
   String id = 'default';
   var url = Uri.parse(strUrl);
   var response = await http.get(url);
@@ -321,7 +321,7 @@ Future<bool> checkBookInServer() async {
 }
 
 Future<String> bookInfoToServer(String filePath, String booktitle) async {
-  String strUrl = "http://10.0.2.2:5000/book";
+  String strUrl = CommonUri+"/book";
   var url = Uri.parse(strUrl);
   var dio = Dio();
   var formData = FormData.fromMap(
@@ -335,7 +335,7 @@ Future<String> bookInfoToServer(String filePath, String booktitle) async {
 }
 
 Future<List<dynamic>> waitingResult(String id, String booktitle) async {
-  String strUrl = "http://10.0.2.2:5000/book?id="+id;
+  String strUrl = CommonUri+"/book?id="+id;
   const timeOut = Duration(seconds: 5);
   var url = Uri.parse(strUrl);
   bool isEnd=false;

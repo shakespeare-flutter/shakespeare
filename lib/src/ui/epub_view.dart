@@ -28,8 +28,8 @@ part '../helpers/epub_view_builders.dart';
 
 const _minTrailingEdge = 0.55;
 const _minLeadingEdge = -0.05;
-//const String CommonUri="http://43.202.32.27:5000";
-const String CommonUri="http://10.210.60.153:5000"; //서버 url 바뀔시 수정
+const String CommonUri="http://43.202.32.27:5000";
+//const String CommonUri="http://10.210.60.153:5000"; //서버 url 바뀔시 수정
 
 typedef ExternalLinkPressed = void Function(String href);
 

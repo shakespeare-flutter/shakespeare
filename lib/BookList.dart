@@ -21,6 +21,7 @@ import 'epub_view_enhanced.dart';
 
 List<String> bookPath = [];
 late Future<List<Book>> booklist;
+bool waitingTheList = false;
 
 class BookList extends StatefulWidget {
   const BookList({super.key});
@@ -53,6 +54,11 @@ class _BookListState extends State<BookList> {
               // hasData
               return Scaffold(
                   appBar: AppBar(
+                    toolbarHeight: 100,
+                    backgroundColor: Colors.transparent,
+                    bottomOpacity: 0.0,
+                    elevation: 0.0,
+
                     leading: IconButton(
                       icon: Icon(Icons.add), // 햄버거버튼 아이콘 생성
                       onPressed: () async {
@@ -94,11 +100,13 @@ class _BookListState extends State<BookList> {
                         }
                       },
                     ),
-                    title: Text("새 책 추가하기"),
+                    title: Text("새 책 추가하기",
+                        style: TextStyle(
+                        fontWeight: FontWeight.bold)),
                     actions: [
                       IconButton(
                         icon: const Icon(Icons.more_horiz),
-                        color: Colors.white,
+                        color: Colors.black,
                         onPressed: () async {
                           bookListPV.clearBook();
                           clearUserData(userDataPV.userdata);
@@ -121,15 +129,15 @@ class _BookListState extends State<BookList> {
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       return AnimatedContainer(
-                                          color: Colors.black26,
                                           duration: const Duration(seconds: 2),
                                           child: InkWell(
                                             onTap: () async {
                                               String bookTitleSelected =
                                                   bookListPV
                                                       .bookList[index].title;
-                                              if (bookListPV.bookList[index]
-                                                  .id!=[]&&bookListPV.bookList[index].isExistInServer==true) {
+                                              if (bookListPV.bookList[index].id
+                                                  !=[]&&bookListPV.bookList[index].isExistInServer==
+                                                  true) {
                                                 bookListPV.bookList[index].analyzedData=await waitingResult(bookListPV.bookList[index].id, bookListPV.bookList[index].title);
                                                 Navigator.push(
                                                     context,
@@ -187,15 +195,16 @@ class _BookListState extends State<BookList> {
                                                     Expanded(
                                                       child: Container(
                                                         height: 160,
-                                                        color: Colors.green,
                                                         child: Column(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
                                                                   .start,
                                                           children: [
                                                             Container(
-                                                              color:
-                                                                  Colors.green,
+                                                              alignment: Alignment.centerLeft,
+                                                              margin: EdgeInsets
+                                                                  .fromLTRB(
+                                                                  10,15,0,5),
                                                               child: Text(
                                                                 bookListPV
                                                                     .bookList[
@@ -205,7 +214,7 @@ class _BookListState extends State<BookList> {
                                                                     fontSize:
                                                                         25,
                                                                     color: Colors
-                                                                        .blue,
+                                                                        .black,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .bold),
@@ -215,12 +224,10 @@ class _BookListState extends State<BookList> {
                                                                 .bookList[index]
                                                                 .isExistInServer) ...[
                                                               Container(
-                                                                color:
-                                                                    Colors.red,
+                                                                alignment: Alignment.centerLeft,
                                                                 margin: EdgeInsets
-                                                                    .only(
-                                                                        top:
-                                                                            10),
+                                                                    .fromLTRB(
+                                                                    10,5,0,0),
                                                                 child: Text(
                                                                   bookListPV
                                                                       .bookList[
@@ -229,14 +236,10 @@ class _BookListState extends State<BookList> {
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           16,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
+                                                                      ),
                                                                 ),
                                                               ),
-                                                              Container(
-                                                                color:
-                                                                    Colors.blue,
+                                                              /*Container(
                                                                 margin: EdgeInsets
                                                                     .only(
                                                                         top:
@@ -250,7 +253,7 @@ class _BookListState extends State<BookList> {
                                                                       fontSize:
                                                                           16),
                                                                 ),
-                                                              ),
+                                                              ),*/
                                                             ] else ...[
                                                               Container(
                                                                   margin: EdgeInsets
@@ -291,11 +294,42 @@ class _BookListState extends State<BookList> {
       SharedPreferencesProvider userDataPV,
       bookListProvider bookListPV,
       int index) async {
+    showDialog(
+      // The user CANNOT close this dialog  by pressing outsite it
+        barrierDismissible: true,
+        context: context,
+        builder: (_) {
+          return Dialog(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+              Container(
+                height: 150,
+                  width:300,
+                  child: Center(
+                      child:
+                      CircularProgressIndicator()),
+              ),
+                Container(
+                  height: 50,
+                  width:300,
+                  margin: EdgeInsets.fromLTRB(0,2,0,5),
+                  child: Center(
+                      child:
+                      Text('책을 분석중입니다...')
+                  )
+                ),
+          ],
+            ),
+          );
+        }
+    );
     bookListPV.bookList[index].id=await bookInfoToServer(prefs.getStringList('bookPath')![index], bookListPV.bookList[index].title);
     prefs.setString(bookListPV.bookList[index].title + 'id', bookListPV.bookList[index].id);
     bookListPV.bookList[index].analyzedData=await waitingResult(bookListPV.bookList[index].id, bookListPV.bookList[index].title);
     prefs.setBool(bookListPV.bookList[index].title + 'isInServer', true);
     bookListPV.bookList[index].isExistInServer = true;
+    Navigator.of(context).pop();
     setState(() {});
   }
 }

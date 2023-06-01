@@ -82,6 +82,13 @@ class EpubController {
         ),
       );
 
+  String? generateBookmark(){
+    String? chapter=_epubViewState?._currentValue?.chapter.toString();
+    String? leadingEdge= _epubViewState?._currentValue?.position.itemLeadingEdge.toInt().toString();
+
+    return 'Chapter : '+chapter!+'\n'+'line: '+leadingEdge!;
+  }
+
   List<EpubViewChapter> tableOfContents() {
     if (_cacheTableOfContents != null) {
       return _cacheTableOfContents ?? [];

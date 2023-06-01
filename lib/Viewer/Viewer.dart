@@ -66,19 +66,18 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
     return new wid.WillPopScope(
       child : new Scaffold(
       appBar: AppBar(
+        toolbarHeight: 75,
+        backgroundColor: Colors.transparent,
+        bottomOpacity: 0.0,
+        elevation: 0.0,
+
         key: _scaffoldKey,
-        title: EpubViewActualChapter(
-          controller: _epubReaderController,
-          builder: (chapterValue) => Text(
-            chapterValue?.chapter?.Title?.replaceAll('\n', '').trim() ?? '',
-            textAlign: TextAlign.start,
-          ),
-        ),
+
         actions: <Widget>[
           Builder(builder: (context) {
             return IconButton(
               icon: const Icon(Icons.bookmark_border_outlined),
-              color: Colors.white,
+              color: Colors.black,
               onPressed: () {
                 Scaffold.of(context).openEndDrawer();
                 //_showCurrentEpubCfi(context);
@@ -92,13 +91,13 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
           }),
           IconButton(
               icon: const Icon(Icons.music_note),
-              color: Colors.white,
+              color: Colors.black,
               onPressed: () {
                 Navigator.of(context).push(FullScreenModal());
               }),
           IconButton(
-            icon: const Icon(Icons.arrow_back),
-            color: Colors.white,
+            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+              color: Colors.black,
               onPressed: () {
 
                 Navigator.pop(context);
@@ -115,19 +114,25 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
         child: Column(
           children: <Widget>[
             Container(
-              color: Colors.orange,
-              height: 65.0,
+              color: Colors.red,
+              height: 60.0,
+              margin: EdgeInsets.only(top:10),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Container(
-                      color: Colors.red,
-                      padding: EdgeInsets.all(4.0),
-                      width: 100.0,
                       child: Text(
-                        "북마크",
-                        style: TextStyle(fontSize: 25, color: Colors.white),
+                        "bookmarks",
+                        style: TextStyle(fontSize: 30, color: Colors.black),
                       )),
+                  IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                      iconSize: 30,
+                      color: Colors.black,
+                      onPressed: () {
+                        _closeEndDrawer();
+                      }
+                  ),
                 ],
               ),
             ),
@@ -152,21 +157,48 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
                                   onTap: () {
                                     _epubReaderController.gotoEpubCfi(userDataPV.userdata.getStringList(widget.bookTitle+'bookmarks')![index]);
                                   },
-                                child: Container(
-                                  color: Colors.blue,
-                                  height: 57.0,
-                                  width: 100.0,
+                                  child: Container(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                children:[
+                                Row(
+                                children:[
+                                  Icon(Icons.bookmark,size: 30),
+                                  Container(
+                                      margin: EdgeInsets.only(left: 40),
+                                  height: 80.0,
+                                  child: Align(
+                                      alignment: Alignment.center,
                                   child: Text(
-                                    userDataPV.userdata.getStringList(widget.bookTitle+'bookmarks')![index],
-                                    style: TextStyle(fontSize: 18),
+                                    cfiToBookmarkC(userDataPV.userdata.getStringList(widget.bookTitle+'bookmarks')![index])
+                                        + ' - '+cfiToBookmarkI(userDataPV.userdata.getStringList(widget.bookTitle+'bookmarks')![index]),
+                                    style: TextStyle(fontSize: 30),
                                   )
-                                )
+                                  )
+                                ),
+                                  ]
+                                ),
+                                  /*Container(
+                                      height: 30.0,
+                                      child: Text(
+                                        'Index : '+cfiToBookmarkI(userDataPV.userdata.getStringList(widget.bookTitle+'bookmarks')![index]),
+                                        style: TextStyle(fontSize: 25),
+                                      )
+                                  ),
+                                  Container(
+                                      child: Divider(color: Colors.red, thickness: 2.0))*/
+                                ]
+                                ),
+                                  decoration : BoxDecoration(
+                              border : Border.all(color : Colors.black)
+                            )
+                            )
                               );
                             }
                             if(index==(userDataPV.userdata.getStringList(widget.bookTitle+'bookmarks')?.length)!) {
                               return Container(
                                   color: Colors.green,
-                                  height: 57.0,
+                                  height: 60.0,
                                   width: 100.0,
                                   child: IconButton(
                                     icon: const Icon(Icons.add),

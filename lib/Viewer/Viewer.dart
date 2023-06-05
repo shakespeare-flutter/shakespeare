@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shakespeare/SelectedBooks.dart';
@@ -25,6 +26,7 @@ class Viewer extends StatefulWidget {
 class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
   late EpubController _epubReaderController;
   late String openedBook;
+
   //final ValueNotifier<String> counterValueNotifier;
 
   @override
@@ -63,8 +65,8 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
       Navigator.of(context).pop();
     }
 
-    return new wid.WillPopScope(
-      child : new Scaffold(
+    return wid.WillPopScope(
+      child : Scaffold(
       appBar: AppBar(
         toolbarHeight: 75,
         backgroundColor: Colors.transparent,
@@ -72,6 +74,15 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
         elevation: 0.0,
 
         key: _scaffoldKey,
+
+        title:AnimatedTextKit(
+          animatedTexts: [
+            TypewriterAnimatedText(musicPV.MOOD),
+          ],
+          onTap: () {
+            print("Tap Event");
+          },
+        ),
 
         actions: <Widget>[
           Builder(builder: (context) {
@@ -89,6 +100,7 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
               },
             );
           }),
+
           IconButton(
               icon: const Icon(Icons.music_note),
               color: Colors.black,
@@ -99,7 +111,7 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
             icon: const Icon(Icons.arrow_back_ios_new_rounded),
               color: Colors.black,
               onPressed: () {
-
+                MusicPlayer.instance.pause();
                 Navigator.pop(context);
                 setState(() {});
               }
@@ -114,7 +126,6 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
         child: Column(
           children: <Widget>[
             Container(
-              color: Colors.red,
               height: 60.0,
               margin: EdgeInsets.only(top:10),
               child: Row(
@@ -153,7 +164,15 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
                           itemBuilder: (BuildContext context, int index) {
                             if((index<(userDataPV.userdata.getStringList(widget.bookTitle+'bookmarks')?.length)!)&&
                                 (0!=userDataPV.userdata.getStringList(widget.bookTitle+'bookmarks')?.length)) {
-                              return InkWell(
+                              return Dismissible(key: Key(userDataPV.userdata.getStringList(widget.bookTitle+'bookmarks')![index]),
+                                  onDismissed: (direction){
+                                    List<String>? tempStr=userDataPV.userdata.getStringList(widget.bookTitle+'bookmarks');
+                                    tempStr?.removeAt(index);
+                                    userDataPV.userdata.setStringList(widget.bookTitle+'bookmarks',tempStr!);
+                                  }
+                                  ,
+                                  child:
+                              InkWell(
                                   onTap: () {
                                     _epubReaderController.gotoEpubCfi(userDataPV.userdata.getStringList(widget.bookTitle+'bookmarks')![index]);
                                   },
@@ -189,20 +208,18 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
                                       child: Divider(color: Colors.red, thickness: 2.0))*/
                                 ]
                                 ),
-                                  decoration : BoxDecoration(
-                              border : Border.all(color : Colors.black)
+
                             )
-                            )
+                              )
                               );
                             }
                             if(index==(userDataPV.userdata.getStringList(widget.bookTitle+'bookmarks')?.length)!) {
                               return Container(
-                                  color: Colors.green,
                                   height: 60.0,
                                   width: 100.0,
                                   child: IconButton(
                                     icon: const Icon(Icons.add),
-                                    color: Colors.orange,
+                                    color: Colors.black,
                                     onPressed: () {
                                       String? newCfi=_epubReaderController.generateEpubCfi();
                                       List<String>? temppaths= userDataPV.userdata.getStringList(bookName);
@@ -252,6 +269,7 @@ class _ViewerState extends State<Viewer>with WidgetsBindingObserver {
     ),
       onWillPop: () async {
         MusicPlayer.instance.pause();
+        Navigator.pop(context);
         return false;
       },
     );
@@ -328,11 +346,28 @@ class FullScreenModal extends ModalRoute {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
             MusicMetaData(musicPV2: musicPV2),
-            // const SizedBox(height: 15),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //   children: [MusicControlButton(), NextMusicButton()],
-            // )
+             const SizedBox(height: 15),
+             Row(
+               mainAxisAlignment: MainAxisAlignment.center,
+               children: [
+                 if(musicPV2.musicLock==false)...{
+                   IconButton(
+                   icon: Icon(Icons.pause_circle_outline,size:75,color:Colors.white),
+                     onPressed: () {
+                     musicPV2.musicLock=true;
+                     musicPV2.voidMusic();
+                     },)
+                 }
+                 else...
+                   {
+                     IconButton(
+                       icon: Icon(Icons.play_circle_outline,size:75,color:Colors.white),
+                       onPressed: () {
+                         musicPV2.unLock();
+                       },)
+                   }
+               ],
+             )
           ])),
     );
   }

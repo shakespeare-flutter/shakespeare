@@ -7,8 +7,6 @@ class SharedPreferencesProvider with ChangeNotifier{
     _userdata=shop;
   }
 
-
-
   SharedPreferences get userdata => _userdata;
 }
 
@@ -44,7 +42,7 @@ String cfiToBookmarkC(String input){
 
   List<String> result = input.split(new RegExp(r'/'));
   List<String> result2 = result[4].split('[');
-  String chapterex = result[1].replaceAll(RegExp('\\D'), "");
+  String chapterex = result2[1].replaceAll(RegExp('\\D'), "");
   String chapter = chapterex.replaceAll('0', "");
 
   return chapter;

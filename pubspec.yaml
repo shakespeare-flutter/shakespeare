@@ -63,6 +63,10 @@ dependencies:
   http: ^0.13.6
   dio: ^5.1.2
   logger: ^1.3.0
+  animated_text_kit: ^4.2.2
+  flutter_launcher_icons: ^0.11.0
+
+
 
 dev_dependencies:
   flutter_test:
@@ -79,7 +83,7 @@ dev_dependencies:
   envied_generator: ^0.3.0
 
   json_serializable: ^6.6.2
-
+  flutter_launcher_icons: ^0.11.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -121,8 +125,10 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 flutter_native_splash:
-  color: "#0B610B"
-  image: assets/title2.png
+  color: "#0F3223"
+  image: assets/title3.png
   android_13:
-    image: assets/title2.png
+    image: assets/title3.png
   fullscreen: true
+
+

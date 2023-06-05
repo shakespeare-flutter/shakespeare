@@ -13,15 +13,21 @@ class bookListProvider with ChangeNotifier{
   void removeBook(var shop){
     _bookList.remove(shop);
   }
-  void clearBook(){
+  void clearBookAll(){
     _bookList.clear();
   }
+  void clearBook(int index){
+    _bookList.removeAt(index);
+  }
+
+
 }
 
 class MusicProvider with ChangeNotifier{
   String _music=''; //stream url 담김
   String ENG='',KOR='',GENRE='',TEMPO='',MOOD='',INSTRUMENT='';
   String get music => _music;
+  bool musicLock=false;
   void updateMusic(var shop,String ENGI,String KORI,String GENREI,String TEMPOI,
       String MOODI,String INSTRUMENTI){ //음악 바뀔때마다 음악 정보 업데이트 됨
     _music=shop;
@@ -32,19 +38,28 @@ class MusicProvider with ChangeNotifier{
     MOOD=MOODI;
     INSTRUMENT=INSTRUMENTI;
     notifyListeners();
-    MusicPlayer.instance.play(music);
+    if(!musicLock) {
+      MusicPlayer.instance.play(music);
+    }
   }
   void voidMusic(){ //음악비우기
     MusicPlayer.instance.pause();
-    _music='';
-    KOR='';
-    ENG='';
-    GENRE='';
-    TEMPO='';
-    MOOD='';
-    INSTRUMENT='';
     notifyListeners();
   }
+
+  void lock(){
+    musicLock=true;
+    notifyListeners();
+  }
+
+  void unLock(){
+    musicLock=false;
+    MusicPlayer.instance.play(music);
+    notifyListeners();
+  }
+
+
+
 }
 
 class Data{

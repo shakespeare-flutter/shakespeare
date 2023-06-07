@@ -40,71 +40,53 @@ class _BookListState extends State<BookList> {
     booklist = makeBookList(
         userDataPV.userdata.getStringList('bookPath')!, bookListPV);
 
-    return FutureBuilder(
-        future: booklist,
-        builder: ((context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(snapshot.error.toString()),
-              );
-            } else {
-              // hasData
-              return Scaffold(
-                  appBar: AppBar(
-                    toolbarHeight: 100,
-                    backgroundColor: Colors.transparent,
-                    bottomOpacity: 0.0,
-                    elevation: 0.0,
-                    leading: IconButton(
-                      icon: Icon(Icons.add), // 햄버거버튼 아이콘 생성
-                      onPressed: () async {
-                        // 아이콘 버튼 실행
-                        print('menu button is clicked');
-                        FilePickerResult? result =
-                            await FilePicker.platform.pickFiles();
-                        if (result != null) {
-                          File file = File(result.files.single.path.toString());
-                          bookPath =
-                              userDataPV.userdata.getStringList('bookPath')!;
-                          if (bookPath.contains(file.path.toString())) {
-                            showDialog<String>(
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                title: const Text('중복 확인'),
-                                content: const Text('이미 리스트에 존재하는 책입니다.'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, 'Cancel'),
-                                    child: const Text('확인'),
-                                  ),
-                                ],
-                              ),
-                            );
-                            setState(() {});
-                          } else {
-                            String newPath = file.path.toString();
-                            saveBookPath(newPath, userDataPV.userdata);
-                            await addBookToPv(
-                                newPath, bookListPV, userDataPV.userdata);
-                            await checkAndAddBookToServer(
-                                userDataPV.userdata,
-                                userDataPV,
-                                bookListPV,
-                                bookListPV.bookList.length - 1);
-                            setState(() {});
-                          }
-                        } else {
-                          // User canceled the picker
-                        }
-                      },
+    // hasData
+    return Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 100,
+          backgroundColor: Colors.transparent,
+          bottomOpacity: 0.0,
+          elevation: 0.0,
+          leading: IconButton(
+            icon: Icon(Icons.add), // 햄버거버튼 아이콘 생성
+            onPressed: () async {
+              // 아이콘 버튼 실행
+              print('menu button is clicked');
+              FilePickerResult? result = await FilePicker.platform.pickFiles();
+              if (result != null) {
+                File file = File(result.files.single.path.toString());
+                bookPath = userDataPV.userdata.getStringList('bookPath')!;
+                if (bookPath.contains(file.path.toString())) {
+                  showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('중복 확인'),
+                      content: const Text('이미 리스트에 존재하는 책입니다.'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'Cancel'),
+                          child: const Text('확인'),
+                        ),
+                      ],
                     ),
-                    title: Text("새 책 추가하기",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    /*actions: [
+                  );
+                  setState(() {});
+                } else {
+                  String newPath = file.path.toString();
+                  saveBookPath(newPath, userDataPV.userdata);
+                  await addBookToPv(newPath, bookListPV, userDataPV.userdata);
+                  await checkAndAddBookToServer(userDataPV.userdata, userDataPV,
+                      bookListPV, bookListPV.bookList.length - 1);
+                  setState(() {});
+                }
+              } else {
+                // User canceled the picker
+              }
+            },
+          ),
+          title:
+              Text("새 책 추가하기", style: TextStyle(fontWeight: FontWeight.bold)),
+          /*actions: [
                       IconButton(
                         icon: const Icon(Icons.more_horiz),
                         color: Colors.black,
@@ -115,199 +97,204 @@ class _BookListState extends State<BookList> {
                         },
                       ),
                     ],*/
-                  ),
-                  body: Column(
-                    children: [
-                      Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                ListView.builder(
-                                    padding: const EdgeInsets.all(20),
-                                    itemCount: bookListPV.bookList.length,
-                                    shrinkWrap: true,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return AnimatedContainer(
-                                          duration: const Duration(seconds: 2),
-                                          child: InkWell(
-                                            onLongPress: (){
-                                             showDelete(context, userDataPV.userdata, bookListPV,userDataPV.userdata.getStringList('bookPath')![index], bookListPV
-                                                 .bookList[index].title, index);
-                                            },
-
-                                            onTap: () async {
-                                              String bookTitleSelected =
+        ),
+        body: Column(
+          children: [
+            FutureBuilder(
+                future: booklist,
+                builder: ((context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text(snapshot.error.toString()),
+                      );
+                    } else {
+                          return Expanded(
+                              child: ListView.builder(
+                                  padding: const EdgeInsets.all(20),
+                                  itemCount: bookListPV.bookList.length,
+                                  shrinkWrap: true,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return InkWell(
+                                      onLongPress: () {
+                                        showDelete(
+                                            context,
+                                            userDataPV.userdata,
+                                            bookListPV,
+                                            userDataPV.userdata.getStringList(
+                                                'bookPath')![index],
+                                            bookListPV.bookList[index].title,
+                                            index);
+                                      },
+                                      onTap: () async {
+                                        String bookTitleSelected =
+                                            bookListPV.bookList[index].title;
+                                        if (bookListPV.bookList[index].id !=
+                                                [] &&
+                                            bookListPV.bookList[index]
+                                                    .isExistInServer ==
+                                                true) {
+                                          bookListPV.bookList[index]
+                                                  .analyzedData =
+                                              await waitingResult(
+                                                  bookListPV.bookList[index].id,
                                                   bookListPV
-                                                      .bookList[index].title;
-                                              if (bookListPV
-                                                          .bookList[index].id !=
-                                                      [] &&
-                                                  bookListPV.bookList[index]
-                                                          .isExistInServer ==
-                                                      true) {
-                                                bookListPV.bookList[index]
-                                                        .analyzedData =
-                                                    await waitingResult(
-                                                        bookListPV
-                                                            .bookList[index].id,
-                                                        bookListPV
-                                                            .bookList[index]
-                                                            .title);
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) => Viewer(
-                                                            openBookPath: File(userDataPV
-                                                                    .userdata
-                                                                    .getStringList(
-                                                                        'bookPath')![
-                                                                index]),
-                                                            bookTitle:
-                                                                bookTitleSelected,
-                                                            responseBody: bookListPV
-                                                                .bookList[index]
-                                                                .analyzedData)));
-                                              } else if (bookListPV
-                                                      .bookList[index]
-                                                      .isExistInServer ==
-                                                  true) {
-                                                //for test
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) => Viewer(
-                                                            openBookPath: File(userDataPV
-                                                                    .userdata
-                                                                    .getStringList(
-                                                                        'bookPath')![
-                                                                index]),
-                                                            bookTitle:
-                                                                bookTitleSelected,
-                                                            responseBody: bookListPV
-                                                                .bookList[index]
-                                                                .analyzedData)));
-                                                /*await bookInfoToServer(bookTitleSelected);
+                                                      .bookList[index].title);
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => Viewer(
+                                                      openBookPath: File(userDataPV
+                                                              .userdata
+                                                              .getStringList(
+                                                                  'bookPath')![
+                                                          index]),
+                                                      bookTitle:
+                                                          bookTitleSelected,
+                                                      responseBody: bookListPV
+                                                          .bookList[index]
+                                                          .analyzedData)));
+                                        } else if (bookListPV.bookList[index]
+                                                .isExistInServer ==
+                                            true) {
+                                          //for test
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => Viewer(
+                                                      openBookPath: File(userDataPV
+                                                              .userdata
+                                                              .getStringList(
+                                                                  'bookPath')![
+                                                          index]),
+                                                      bookTitle:
+                                                          bookTitleSelected,
+                                                      responseBody: bookListPV
+                                                          .bookList[index]
+                                                          .analyzedData)));
+                                          /*await bookInfoToServer(bookTitleSelected);
                                                 await waitingResult(bookTitleSelected);
                                                 saveBookServerBool(bookTitleSelected, userDataPV.userdata);
                                                 bookListPV.bookList[index].isExistInServer=true;
                                                 setState(() {});*/
-                                              } else {}
-                                            },
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    Container(
-                                                      width: 115,
-                                                      height: 170,
-                                                      decoration: BoxDecoration(
-                                                        image: DecorationImage(
-                                                          image: AssetImage(
+                                        } else {}
+                                      },
+                                        child: Container(
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Container(
+                                                width: 115,
+                                                height: 170,
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: AssetImage(bookListPV
+                                                        .bookList[index].cover),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Container(
+                                                  height: 160,
+                                                  child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          alignment: Alignment
+                                                              .centerLeft,
+                                                          margin: EdgeInsets
+                                                              .fromLTRB(
+                                                                  10, 15, 0, 5),
+                                                          child: Text(
+                                                            bookListPV
+                                                                .bookList[index]
+                                                                .title,
+                                                            style: TextStyle(
+                                                                fontSize: 25,
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                          ),
+                                                        ),
+                                                        if (bookListPV
+                                                            .bookList[index]
+                                                            .isExistInServer) ...[
+                                                          Container(
+                                                            alignment: Alignment
+                                                                .centerLeft,
+                                                            margin: EdgeInsets
+                                                                .fromLTRB(10, 5,
+                                                                    0, 0),
+                                                            child: Text(
                                                               bookListPV
                                                                   .bookList[
                                                                       index]
-                                                                  .cover),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      child: Container(
-                                                        height: 160,
-                                                        child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Container(
-                                                                alignment: Alignment
-                                                                    .centerLeft,
-                                                                margin: EdgeInsets
-                                                                    .fromLTRB(
-                                                                        10,
-                                                                        15,
-                                                                        0,
-                                                                        5),
-                                                                child: Text(
-                                                                  bookListPV
-                                                                      .bookList[
-                                                                          index]
-                                                                      .title,
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          25,
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold),
-                                                                ),
+                                                                  .author,
+                                                              style: TextStyle(
+                                                                fontSize: 16,
                                                               ),
-                                                              if (bookListPV
-                                                                  .bookList[
-                                                                      index]
-                                                                  .isExistInServer) ...[
-                                                                Container(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .centerLeft,
-                                                                  margin: EdgeInsets
-                                                                      .fromLTRB(
-                                                                          10,
-                                                                          5,
-                                                                          0,
-                                                                          0),
-                                                                  child: Text(
-                                                                    bookListPV
-                                                                        .bookList[
-                                                                            index]
-                                                                        .author,
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          16,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ] else ...[
-                                                                Container(
-                                                                    margin: EdgeInsets
-                                                                        .only(
-                                                                            top:
-                                                                                30),
-                                                                    child: Row(
-                                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                                        children: [
-                                                                          CircularProgressIndicator(),
-                                                                          OutlinedButton(onPressed: (){
-                                                                            clearBook(userDataPV.userdata, bookListPV, userDataPV.userdata.getStringList('bookPath')![index],bookListPV.bookList[index].title,index);
-                                                                            setState(() {});
-                                                                          }, child: Text('작업 취소',style: TextStyle(color: Colors.green),))
-                                                                        ]))
-                                                              ],
-                                                            ]),
-                                                      ),
-                                                    ),
-                                                  ],
+                                                            ),
+                                                          ),
+                                                        ] else ...[
+                                                          Container(
+                                                              margin: EdgeInsets
+                                                                  .only(
+                                                                      top: 30),
+                                                              child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceEvenly,
+                                                                  children: [
+                                                                    CircularProgressIndicator(),
+                                                                    OutlinedButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          clearBook(
+                                                                              userDataPV.userdata,
+                                                                              bookListPV,
+                                                                              userDataPV.userdata.getStringList('bookPath')![index],
+                                                                              bookListPV.bookList[index].title,
+                                                                              index);
+                                                                          setState(
+                                                                              () {});
+                                                                        },
+                                                                        child:
+                                                                            Text(
+                                                                          '작업 취소',
+                                                                          style:
+                                                                              TextStyle(color: Colors.green),
+                                                                        ))
+                                                                  ]))
+                                                        ],
+                                                      ]),
                                                 ),
-                                                Container(
-                                                  height: 15,
-                                                )
-                                              ],
-                                            ),
-                                          ));
-                                    })
-                              ])),
-                    ],
-                  ));
-            }
-          } else {
-            return const Center(
-              child: Text('No data found'),
-            );
-          }
-        }));
+                                              ),
+                                            ],
+                                          ),
+                                          Container(
+                                            height: 15,
+                                          )
+                                        ]
+                                      ),
+                                    ));
+                                  }));
+                    }
+                  } else {
+                    return const Center(
+                      child: Text('No data found'),
+                    );
+                  }
+                }))
+          ],
+        ));
   }
 
   Future<void> checkAndAddBookToServer(
@@ -318,10 +305,10 @@ class _BookListState extends State<BookList> {
     bookListPV.bookList[index].id = await bookInfoToServer(
         prefs.getStringList('bookPath')![index],
         bookListPV.bookList[index].title);
-    if(bookListPV.bookList[index].id==''){
-      Navigator.of(context).pop();
+    if (bookListPV.bookList[index].id == '') {
       showServerError(context);
-      clearBook(prefs, bookListPV, prefs.getStringList('bookPath')![index],bookListPV.bookList[index].title,index);
+      clearBook(prefs, bookListPV, prefs.getStringList('bookPath')![index],
+          bookListPV.bookList[index].title, index);
       return;
     }
     prefs.setString(
@@ -367,10 +354,10 @@ class _BookListState extends State<BookList> {
     return bookListPV.bookList;
   }
 
-  void showDelete(var context, SharedPreferences prefs, bookListProvider bookListPV,
-      String path, String title, int index) {
+  void showDelete(var context, SharedPreferences prefs,
+      bookListProvider bookListPV, String path, String title, int index) {
     showDialog(
-      // The user CANNOT close this dialog  by pressing outsite it
+        // The user CANNOT close this dialog  by pressing outsite it
         barrierDismissible: true,
         context: context,
         builder: (_) {
@@ -385,7 +372,7 @@ class _BookListState extends State<BookList> {
                     child: Center(child: Text('책을 리스트에서 지우겠습니까?'))),
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children:[
+                    children: [
                       IconButton(
                           onPressed: () {
                             clearBook(prefs, bookListPV, path, title, index);
@@ -398,15 +385,12 @@ class _BookListState extends State<BookList> {
                             Navigator.of(context).pop();
                           },
                           icon: Icon(Icons.cancel_outlined))
-                    ]
-                )
+                    ])
               ],
             ),
           );
         });
   }
-
-
 }
 
 Future<List<Book>> makeBookList(
@@ -562,5 +546,3 @@ void showServerError(var context) {
         );
       });
 }
-
-

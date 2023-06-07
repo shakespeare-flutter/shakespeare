@@ -237,6 +237,7 @@ class _EpubViewState extends State<EpubView> {
               responseMap2['TEMPO'],
               responseMap2['MOOD'],
               responseMap2['INSTRUMENT']);
+          widget.musicPV.update();
         }
       }
     }

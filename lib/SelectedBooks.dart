@@ -28,6 +28,7 @@ class MusicProvider with ChangeNotifier{
   String ENG='',KOR='',GENRE='',TEMPO='',MOOD='',INSTRUMENT='';
   String get music => _music;
   bool musicLock=false;
+  String mention = '';
   void updateMusic(var shop,String ENGI,String KORI,String GENREI,String TEMPOI,
       String MOODI,String INSTRUMENTI){ //음악 바뀔때마다 음악 정보 업데이트 됨
     _music=shop;
@@ -42,20 +43,40 @@ class MusicProvider with ChangeNotifier{
       MusicPlayer.instance.play(music);
     }
   }
+
+  void update(){
+    if(!musicLock) {
+    mention = '음악 변경됨.';
+    notifyListeners();
+    }
+  }
+
+
+
+  void playMusic(){
+    if(!musicLock) {
+      MusicPlayer.instance.play(music);
+    }
+  }
+
+
   void voidMusic(){ //음악비우기
     MusicPlayer.instance.pause();
+    mention='';
     notifyListeners();
   }
 
   void lock(){
     musicLock=true;
+    mention='';
+    MusicPlayer.instance.pause();
     notifyListeners();
   }
 
   void unLock(){
     musicLock=false;
-    MusicPlayer.instance.play(music);
     notifyListeners();
+    MusicPlayer.instance.play(music);
   }
 
 

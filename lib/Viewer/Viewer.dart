@@ -78,8 +78,10 @@ class _ViewerState extends State<Viewer> with WidgetsBindingObserver {
           key: _scaffoldKey,
           title: AnimatedTextKit(
             animatedTexts: [
-              TypewriterAnimatedText(musicPV.MOOD),
+              FadeAnimatedText(musicPV.mention),
+              FadeAnimatedText('')
             ],
+            totalRepeatCount: 1,
             onTap: () {
               print("Tap Event");
             },
@@ -111,6 +113,7 @@ class _ViewerState extends State<Viewer> with WidgetsBindingObserver {
                 color: Colors.black,
                 onPressed: () {
                   MusicPlayer.instance.pause();
+                  musicPV.voidMusic();
                   Navigator.pop(context);
                   setState(() {});
                 }),
@@ -297,6 +300,7 @@ class _ViewerState extends State<Viewer> with WidgetsBindingObserver {
       ),
       onWillPop: () async {
         MusicPlayer.instance.pause();
+        musicPV.voidMusic();
         Navigator.pop(context);
         return false;
       },
@@ -379,8 +383,7 @@ class FullScreenModal extends ModalRoute {
                     style: OutlinedButton.styleFrom(fixedSize: const Size(150,60)
                     ,side: BorderSide(color: Colors.white, width: 5),),
                     onPressed: () {
-                      musicPV2.musicLock = true;
-                      musicPV2.voidMusic();
+                      musicPV2.lock();
                     }, child: Text('MUTE',style: TextStyle(color: Colors.white,fontSize: 20))
                   )
                 } else ...{
@@ -389,7 +392,7 @@ class FullScreenModal extends ModalRoute {
                       ,side: BorderSide(color: Colors.white, width: 5),),
                     onPressed: () {
                       musicPV2.unLock();
-                    },child: Text('MUTE',style: TextStyle(color: Colors.white,fontSize: 20))
+                    },child: Text('UNMUTE',style: TextStyle(color: Colors.white,fontSize: 20))
                   )
                 }
               ],
